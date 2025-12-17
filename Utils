@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <math.h>
+#include "Utils.h"
+
+void get_common_input(float *L, float *R, float *f, float *D){
+    printf("\n >> Enter component Values: \n");
+    
+    printf(" Inductance L (Henry):  ");
+    scanf("%f",L);
+    getchar();
+
+    printf("\n Rsistance R (Ohms):  ");
+    scanf("%f",R);
+    getchar();
+
+    printf(" Frequency F (Hz):  ");
+    scanf("%f",f);
+    getchar();
+
+    printf(" Duty Ration K (0.0 to 1.0):  ");
+    scanf("%f",D);
+    getchar();
+}
+
+
+void run_automated_test(float D, float result_voltage){
+    printf("\n <[O'o]> --- Automated test result ---\n");
+    printf("     <|>\n");
+
+    int passed = 1;
+    // Phyiscal Limit of duty ratio
+    if (D <= 0.0 || D >= 1.0){
+        printf(" <[O'o]> [FAIL] duty cycle %.2f is impossible (must be 0 < D < 1).\n", D);
+        printf("   <|>");
+        passed = 0;
+    }else{
+        printf("<[O'o]> [PASS] Duty cycle is valid. \n");
+        printf("  <|>\n");
+    }
+    if (result_voltage > 100.0){
+        printf(" <[O'o]> [WARNING] Voltage %.2f exceeds 100V safety threshold! \n", result_voltage);
+        printf("   <|>\n");
+    }else{
+        printf(" <[O'o]> [PASS] Voltage levels within safe limits. \n");
+        printf("   <|>\n");
+    } 
+    if (passed){
+        printf(" <[O'o]> SYSTEM STATUS: GREEN (Design Valid) \n ");
+        printf("   <|>\n");
+    }else{
+        printf(" <[O'o]> SYSTEM STATUS: RED (Design Invalid) \n ");
+        printf("   <|>\n");
+    }
+    printf("-----------------------------------------------\n");        
+}
+void run_efficiency_test(float vin, float vout, float R){
+    float i_in_measured;
+    printf("\n <[O'o]> Run Efficiency Test? (y/n): ");
+    char c; 
+    scanf("%c",&c);
+
+    if (c == 'y' || c == 'Y'){
+        float i_out_calc = vout / R;
+        printf("  Calculated I_out: %.3f A\n", i_out_calc);
+        printf("  Enter the measured I_in (Amps): ");
+        scanf("%f", &i_in_measured);
+        float pin = vin * i_in_measured;
+        float pout = vout * i_out_calc;
+
+        if (pin <= 0){
+            printf(" <[O'o]> Error: Pin <= 0 \n");
+            printf("   <|>\n" );
+            return;
+        }
+        float eff = (pout / pin) * 100.0f;
+        printf("  [");
+        for(int i=0; i<28; i++){
+            if (i < (int)(eff/5)){
+                printf("#");
+            }else{
+                printf(".");
+            }
+            printf("]\n");
+        }
+    }
+    
+
+}
